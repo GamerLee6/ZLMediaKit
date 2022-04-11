@@ -1010,7 +1010,7 @@ void RtspSession::startListenPeerUdpData(int track_idx) {
     auto srcIP = inet_addr(get_peer_ip().data());
     InfoL << "srcIP:" << get_peer_ip().data();
 
-    auto onUdpData = [weakSelf,srcIP](const Buffer::Ptr &buf, struct sockaddr *peer_addr, int interleaved){
+    auto onUdpData = [weakSelf,srcIP](const Buffer::Ptr &buf, struct sockaddr *peer_addr, int interleaved) -> bool {
         InfoL << "line 1014???";
         auto strongSelf = weakSelf.lock();
         InfoL << "line 1016???";
@@ -1046,7 +1046,6 @@ void RtspSession::startListenPeerUdpData(int track_idx) {
         return true;
     };
 
-    InfoL <<"onUdpData:" << onUdpData;
     InfoL << "_rtp_type:" << _rtp_type; 
     switch (_rtp_type){  
         case Rtsp::RTP_MULTICAST:{
@@ -1058,11 +1057,13 @@ void RtspSession::startListenPeerUdpData(int track_idx) {
         }
             break;
         case Rtsp::RTP_UDP:{
+            InfoL << "inside case RTP_UDP 0";
             auto setEvent = [&](Socket::Ptr &sock,int interleaved){
                 if(!sock){
                     WarnP(this) << "udp端口为空:" << interleaved;
                     return;
                 }
+                InfoL << "point 111";
                 sock->setOnRead([onUdpData,interleaved](const Buffer::Ptr &pBuf, struct sockaddr *pPeerAddr , int addr_len){
                     onUdpData(pBuf, pPeerAddr, interleaved);
                 });
