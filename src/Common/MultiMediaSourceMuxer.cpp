@@ -454,7 +454,8 @@ bool MultiMediaSourceMuxer::onTrackFrame(const Frame::Ptr &frame_in) {
 
 bool MultiMediaSourceMuxer::isEnabled(){
     GET_CONFIG(uint32_t, stream_none_reader_delay_ms, General::kStreamNoneReaderDelayMS);
-    if (!_is_enable || _last_check.elapsedTime() > stream_none_reader_delay_ms) {
+    // if (!_is_enable || _last_check.elapsedTime() > stream_none_reader_delay_ms) {
+    if (0) {
         //无人观看时，每次检查是否真的无人观看
         //有人观看时，则延迟一定时间检查一遍是否无人观看了(节省性能)
         auto hls = _hls;

@@ -648,6 +648,7 @@ void RtspSession::handleReq_Setup(const Parser &parser) {
     trackRef->_inited = true; //现在初始化
 
     if(_rtp_type == Rtsp::RTP_Invalid){
+        InfoL << "_rtp_type:" << _rtp_type;
         auto &strTransport = parser["Transport"];
         if(strTransport.find("TCP") != string::npos){
             _rtp_type = Rtsp::RTP_TCP;
@@ -704,6 +705,7 @@ void RtspSession::handleReq_Setup(const Parser &parser) {
         string strClientPort = FindField(parser["Transport"].data(), "client_port=", NULL);
         uint16_t ui16RtpPort = atoi(FindField(strClientPort.data(), NULL, "-").data());
         uint16_t ui16RtcpPort = atoi(FindField(strClientPort.data(), "-", NULL).data());
+        InfoL << "strClientPort:" << strClientPort << ", ui16RtpPort:" << ui16RtpPort << ", ui16RtcpPort:" << ui16RtcpPort;
 
         struct sockaddr_in peerAddr;
         //设置rtp发送目标地址
@@ -979,6 +981,7 @@ void RtspSession::onRcvPeerUdpData(int interleaved, const Buffer::Ptr &buf, cons
 void RtspSession::startListenPeerUdpData(int track_idx) {
     weak_ptr<RtspSession> weakSelf = dynamic_pointer_cast<RtspSession>(shared_from_this());
     auto srcIP = inet_addr(get_peer_ip().data());
+    InfoL << "srcIP:" << srcIP;
     auto onUdpData = [weakSelf,srcIP](const Buffer::Ptr &buf, struct sockaddr *peer_addr, int interleaved){
         auto strongSelf = weakSelf.lock();
         if (!strongSelf) {
@@ -1009,6 +1012,7 @@ void RtspSession::startListenPeerUdpData(int track_idx) {
     };
 
     switch (_rtp_type){
+        // InfoL << "_rtp_type:" << _rtp_type;
         case Rtsp::RTP_MULTICAST:{
             //组播使用的共享rtcp端口
             UDPServer::Instance().listenPeer(get_peer_ip().data(), this,
