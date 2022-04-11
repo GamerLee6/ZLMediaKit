@@ -128,6 +128,7 @@ void MediaSink::checkTrackIfReady(){
 }
 
 void MediaSink::addTrackCompleted(){
+    InfoL << "point 6";
     _max_track_size = _track_map.size();
     checkTrackIfReady();
 }

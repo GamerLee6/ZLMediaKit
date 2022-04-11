@@ -43,6 +43,7 @@ string getOriginTypeString(MediaOriginType type){
 }
 
 static string getOriginUrl_l(const MediaSource *thiz) {
+    InfoL << "point 5";
     if (thiz == MediaSource::NullMediaSource) {
         return "";
     }

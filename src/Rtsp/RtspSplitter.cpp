@@ -36,19 +36,23 @@ const char *RtspSplitter::onSearchPacketTail(const char *data, size_t len) {
 }
 
 const char *RtspSplitter::onSearchPacketTail_l(const char *data, size_t len) {
+    InfoL << "point 3";
     if(!_enableRecvRtp || data[0] != '$'){
         //这是rtsp包
+        InfoL << "point 3.1";
         _isRtpPacket = false;
         return HttpRequestSplitter::onSearchPacketTail(data, len);
     }
     //这是rtp包
     if(len < 4){
         //数据不够
+        InfoL << "point 3.2";
         return nullptr;
     }
     uint16_t length = (((uint8_t *)data)[2] << 8) | ((uint8_t *)data)[3];
     if(len < (size_t)(length + 4)){
         //数据不够
+        InfoL << "point 3.3";
         return nullptr;
     }
     //返回rtp包末尾
@@ -59,12 +63,14 @@ const char *RtspSplitter::onSearchPacketTail_l(const char *data, size_t len) {
 ssize_t RtspSplitter::onRecvHeader(const char *data, size_t len) {
     InfoL << "point 1";
     if(_isRtpPacket){
+        InfoL << "point 1.1";
         onRtpPacket(data,len);
         return 0;
     }
     _parser.Parse(data);
     auto ret = getContentLength(_parser);
     if(ret == 0){
+        InfoL << "point 1.2";
         onWholeRtspPacket(_parser);
         _parser.Clear();
     }

@@ -168,6 +168,7 @@ void RtspSession::onWholeRtspPacket(Parser &parser) {
 }
 
 void RtspSession::onRtpPacket(const char *data, size_t len) {
+    InfoL << "point 1" ;
     uint8_t interleaved = data[1];
     if (interleaved % 2 == 0) {
         auto track_idx = getTrackIndexByInterleaved(interleaved);

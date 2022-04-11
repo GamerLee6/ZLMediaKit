@@ -76,6 +76,7 @@ public:
      * 获取该源的sdp
      */
     const std::string &getSdp() const {
+        InfoL << "getSdp";
         return _sdp;
     }
 
@@ -141,6 +142,7 @@ public:
      * 设置sdp
      */
     virtual void setSdp(const std::string &sdp) {
+        InfoL << "setSdp";
         SdpParser sdp_parser(sdp);
         _tracks[TrackVideo] = sdp_parser.getTrack(TrackVideo);
         _tracks[TrackAudio] = sdp_parser.getTrack(TrackAudio);
