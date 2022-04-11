@@ -299,6 +299,7 @@ void RtspSession::handleReq_ANNOUNCE(const Parser &parser) {
         if (!strongSelf) {
             return;
         }
+        InfoL << "point 2.7.1";
         strongSelf->async([weakSelf, onRes, err, option]() {
             auto strongSelf = weakSelf.lock();
             if (!strongSelf) {
@@ -707,6 +708,7 @@ void RtspSession::handleReq_Setup(const Parser &parser) {
 
     case Rtsp::RTP_UDP: {
         std::pair<Socket::Ptr, Socket::Ptr> pr = std::make_pair(createSocket(),createSocket());
+        InfoL << "case RTP_UDP";
         try {
             makeSockPair(pr, get_local_ip());
         } catch (std::exception &ex) {
@@ -1011,6 +1013,7 @@ void RtspSession::startListenPeerUdpData(int track_idx) {
     auto onUdpData = [weakSelf,srcIP](const Buffer::Ptr &buf, struct sockaddr *peer_addr, int interleaved){
         auto strongSelf = weakSelf.lock();
         if (!strongSelf) {
+            InfoL << "start Listen Peer Udp Data.01";
             return false;
         }
         InfoL << "start Listen Peer Udp Data.0";
