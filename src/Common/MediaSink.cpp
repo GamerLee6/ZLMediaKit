@@ -37,6 +37,7 @@ bool MediaSink::addTrack(const Track::Ptr &track_in) {
     };
     _ticker.resetTime();
 
+    InfoL << "point1";
     track->addDelegate(std::make_shared<FrameWriterInterfaceHelper>([this](const Frame::Ptr &frame) {
         if (_all_track_ready) {
             return onTrackFrame(frame);
@@ -70,6 +71,7 @@ bool MediaSink::inputFrame(const Frame::Ptr &frame) {
     if (it == _track_map.end()) {
         return false;
     }
+    InfoL << "point2";
     //got frame
     it->second.second = true;
     auto ret = it->second.first->inputFrame(frame);
@@ -82,6 +84,7 @@ bool MediaSink::inputFrame(const Frame::Ptr &frame) {
 }
 
 void MediaSink::checkTrackIfReady(){
+    InfoL << "point3";
     if (!_all_track_ready && !_track_ready_callback.empty()) {
         for (auto &pr : _track_map) {
             if (pr.second.second && pr.second.first->ready()) {
