@@ -1003,6 +1003,7 @@ void RtspSession::onRcvPeerUdpData(int interleaved, const Buffer::Ptr &buf, cons
 }
 
 void RtspSession::startListenPeerUdpData(int track_idx) {
+    InfoL << "start Listen Peer Udp Data";
     weak_ptr<RtspSession> weakSelf = dynamic_pointer_cast<RtspSession>(shared_from_this());
     auto srcIP = inet_addr(get_peer_ip().data());
     InfoL << "srcIP:" << get_peer_ip().data();
@@ -1012,20 +1013,24 @@ void RtspSession::startListenPeerUdpData(int track_idx) {
         if (!strongSelf) {
             return false;
         }
+        InfoL << "start Listen Peer Udp Data.0";
 
         if (((struct sockaddr_in *) peer_addr)->sin_addr.s_addr != srcIP) {
             WarnP(strongSelf.get()) << ((interleaved % 2 == 0) ? "收到其他地址的rtp数据:" : "收到其他地址的rtcp数据:")
                                     << SockUtil::inet_ntoa(((struct sockaddr_in *) peer_addr)->sin_addr);
             return true;
         }
+        InfoL << "start Listen Peer Udp Data.1";
 
         struct sockaddr addr = *peer_addr;
         strongSelf->async([weakSelf, buf, addr, interleaved]() {
             auto strongSelf = weakSelf.lock();
             if (!strongSelf) {
+                InfoL << "start Listen Peer Udp Data.2";
                 return;
             }
             try {
+                InfoL << "start Listen Peer Udp Data.3";
                 strongSelf->onRcvPeerUdpData(interleaved, buf, addr);
             } catch (SockException &ex) {
                 strongSelf->shutdown(ex);
