@@ -212,8 +212,10 @@ template<int kCount = 2>
 class RtpMultiReceiver {
 public:
     RtpMultiReceiver() {
+        InfoL << "RtpMultiReceiver";
         int index = 0;
         for (auto &track : _track) {
+            InfoL << "RtpMultiReceiver.0";
             track.setOnSorted([this, index](RtpPacket::Ptr rtp) {
                 onRtpSorted(std::move(rtp), index);
             });
@@ -236,6 +238,7 @@ public:
      * @return 解析成功返回true
      */
     bool handleOneRtp(int index, TrackType type, int sample_rate, uint8_t *ptr, size_t len) {
+        InfoL << "point 1";
         assert(index < kCount && index >= 0);
         return _track[index].inputRtp(type, sample_rate, ptr, len).operator bool();
     }

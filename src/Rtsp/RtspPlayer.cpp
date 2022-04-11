@@ -477,6 +477,7 @@ void RtspPlayer::handleResPAUSE(const Parser& parser,int type) {
 }
 
 void RtspPlayer::onWholeRtspPacket(Parser &parser) {
+    InfoL << "point 0";
     try {
         decltype(_on_response) func;
         _on_response.swap(func);

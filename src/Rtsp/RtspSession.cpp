@@ -132,6 +132,7 @@ void RtspSession::onRecv(const Buffer::Ptr &buf) {
 }
 
 void RtspSession::onWholeRtspPacket(Parser &parser) {
+    InfoL << "point 0";
     string method = parser.Method(); //提取出请求命令字
     _cseq = atoi(parser["CSeq"].data());
     if (_content_base.empty() && method != "GET") {
@@ -962,9 +963,12 @@ void RtspSession::send_NotAcceptable() {
 }
 
 void RtspSession::onRtpSorted(RtpPacket::Ptr rtp, int track_idx) {
+    InfoL << "onRtpSorted";
     if (_push_src) {
+        InfoL << "onRtpSorted.1";
         _push_src->onWrite(std::move(rtp), false);
     } else {
+        InfoL << "onRtpSorted.0";
         WarnL << "Not a rtsp push!";
     }
 }
