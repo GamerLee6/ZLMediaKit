@@ -213,6 +213,7 @@ void RtspPlayer::handleResDESCRIBE(const Parser& parser) {
 
 //有必要的情况下创建udp端口
 void RtspPlayer::createUdpSockIfNecessary(int track_idx){
+    InfoL << "createUdpSockIfNecessary";
     auto &rtpSockRef = _rtp_sock[track_idx];
     auto &rtcpSockRef = _rtcp_sock[track_idx];
     if (!rtpSockRef || !rtcpSockRef) {
@@ -251,6 +252,7 @@ void RtspPlayer::sendSetup(unsigned int track_idx) {
 }
 
 void RtspPlayer::handleResSETUP(const Parser &parser, unsigned int track_idx) {
+    InfoL << "point 9";
     if (parser.Url() != "200") {
         throw std::runtime_error(StrPrinter << "SETUP:" << parser.Url() << " " << parser.Tail() << endl);
     }
@@ -268,6 +270,8 @@ void RtspPlayer::handleResSETUP(const Parser &parser, unsigned int track_idx) {
     } else {
         _rtp_type = Rtsp::RTP_UDP;
     }
+    InfoL << "_rtp_type:" <<_rtp_type;
+
     auto transport_map = Parser::parseArgs(strTransport, ";", "=");
     RtspSplitter::enableRecvRtp(_rtp_type == Rtsp::RTP_TCP);
     string ssrc = transport_map["ssrc"];
@@ -282,6 +286,7 @@ void RtspPlayer::handleResSETUP(const Parser &parser, unsigned int track_idx) {
         sscanf(transport_map["interleaved"].data(), "%d-%d", &interleaved_rtp, &interleaved_rtcp);
         _sdp_track[track_idx]->_interleaved = interleaved_rtp;
     } else {
+        InfoL << "point 9.1";
         auto port_str = transport_map[(_rtp_type == Rtsp::RTP_MULTICAST ? "port" : "server_port")];
         int rtp_port, rtcp_port;
         sscanf(port_str.data(), "%d-%d", &rtp_port, &rtcp_port);
@@ -315,6 +320,7 @@ void RtspPlayer::handleResSETUP(const Parser &parser, unsigned int track_idx) {
             rtpto.sin_addr.s_addr = inet_addr(get_peer_ip().data());
             pRtcpSockRef->bindPeerAddr((struct sockaddr *)&(rtpto));
         } else {
+            InfoL << "point 9.2";
             createUdpSockIfNecessary(track_idx);
             //udp单播
             struct sockaddr_in rtpto;
@@ -322,6 +328,7 @@ void RtspPlayer::handleResSETUP(const Parser &parser, unsigned int track_idx) {
             rtpto.sin_family = AF_INET;
             rtpto.sin_addr.s_addr = inet_addr(get_peer_ip().data());
             pRtpSockRef->bindPeerAddr((struct sockaddr *)&(rtpto));
+            InfoL << "udp单ip:" << get_peer_ip().data() << ", udp单port:" << rtp_port;
             //发送rtp打洞包
             pRtpSockRef->send("\xce\xfa\xed\xfe", 4);
 
@@ -334,6 +341,7 @@ void RtspPlayer::handleResSETUP(const Parser &parser, unsigned int track_idx) {
 
         auto srcIP = inet_addr(get_peer_ip().data());
         weak_ptr<RtspPlayer> weakSelf = dynamic_pointer_cast<RtspPlayer>(shared_from_this());
+        InfoL << "point 9.3";
         //设置rtp over udp接收回调处理函数
         pRtpSockRef->setOnRead([srcIP, track_idx, weakSelf](const Buffer::Ptr &buf, struct sockaddr *addr , int addr_len) {
             auto strongSelf = weakSelf.lock();
@@ -349,6 +357,7 @@ void RtspPlayer::handleResSETUP(const Parser &parser, unsigned int track_idx) {
         });
 
         if(pRtcpSockRef) {
+            InfoL << "point 9.4";
             //设置rtcp over udp接收回调处理函数
             pRtcpSockRef->setOnRead([srcIP, track_idx, weakSelf](const Buffer::Ptr &buf, struct sockaddr *addr , int addr_len) {
                 auto strongSelf = weakSelf.lock();
@@ -363,6 +372,7 @@ void RtspPlayer::handleResSETUP(const Parser &parser, unsigned int track_idx) {
             });
         }
     }
+    InfoL << "point 9.5";
 
     if (track_idx < _sdp_track.size() - 1) {
         //需要继续发送SETUP命令
