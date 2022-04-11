@@ -31,6 +31,7 @@ public:
     RtspMediaSourceImp(const std::string &vhost, const std::string &app, const std::string &id, int ringSize = RTP_GOP_SIZE) : RtspMediaSource(vhost, app, id,ringSize) {
         _demuxer = std::make_shared<RtspDemuxer>();
         _demuxer->setTrackListener(this);
+        InfoL << "create Imp";
     }
 
     ~RtspMediaSourceImp() = default;

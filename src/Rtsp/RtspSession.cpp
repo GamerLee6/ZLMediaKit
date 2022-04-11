@@ -205,6 +205,7 @@ void RtspSession::handleReq_Options(const Parser &parser) {
 }
 
 void RtspSession::handleReq_ANNOUNCE(const Parser &parser) {
+    InfoL << "point 2";
     auto full_url = parser.FullUrl();
     _content_base = full_url;
     if (end_with(full_url, ".sdp")) {
@@ -219,6 +220,7 @@ void RtspSession::handleReq_ANNOUNCE(const Parser &parser) {
         sendRtspResponse("403 Forbidden", {"Content-Type", "text/plain"}, err);
         throw SockException(Err_shutdown, StrPrinter << err << ":" << full_url);
     }
+    InfoL << "point 2.2";
 
     auto onRes = [this, parser, full_url](const string &err, const ProtocolOption &option) {
         if (!err.empty()) {
@@ -232,6 +234,7 @@ void RtspSession::handleReq_ANNOUNCE(const Parser &parser) {
         auto push_failed = (bool)src;
 
         while (src) {
+            InfoL << "point 2.3";
             //尝试断连后继续推流
             auto rtsp_src = dynamic_pointer_cast<RtspMediaSourceImp>(src);
             if (!rtsp_src) {
@@ -249,6 +252,7 @@ void RtspSession::handleReq_ANNOUNCE(const Parser &parser) {
             break;
         }
 
+        InfoL << "point 2.4";
         if (push_failed) {
             sendRtspResponse("406 Not Acceptable", { "Content-Type", "text/plain" }, "Already publishing.");
             string err = StrPrinter << "ANNOUNCE:"
@@ -272,6 +276,7 @@ void RtspSession::handleReq_ANNOUNCE(const Parser &parser) {
             _rtcp_context.emplace_back(std::make_shared<RtcpContextForRecv>());
         }
 
+        InfoL << "point 2.5";
         if (!_push_src) {
             _push_src = std::make_shared<RtspMediaSourceImp>(_media_info._vhost, _media_info._app, _media_info._streamid);
             //获取所有权
@@ -282,6 +287,7 @@ void RtspSession::handleReq_ANNOUNCE(const Parser &parser) {
 
         _push_src->setListener(dynamic_pointer_cast<MediaSourceEvent>(shared_from_this()));
         sendRtspResponse("200 OK");
+        InfoL << "point 2.6";
     };
 
     weak_ptr<RtspSession> weakSelf = dynamic_pointer_cast<RtspSession>(shared_from_this());
@@ -299,6 +305,7 @@ void RtspSession::handleReq_ANNOUNCE(const Parser &parser) {
         });
     };
 
+    InfoL << "point 2.7";
     //rtsp推流需要鉴权
     auto flag = NoticeCenter::Instance().emitEvent(Broadcast::kBroadcastMediaPublish, MediaOriginType::rtsp_push, _media_info, invoker, static_cast<SockInfo &>(*this));
     if (!flag) {
@@ -308,6 +315,7 @@ void RtspSession::handleReq_ANNOUNCE(const Parser &parser) {
 }
 
 void RtspSession::handleReq_RECORD(const Parser &parser){
+    InfoL << "point 3";
     if (_sdp_track.empty() || parser["Session"] != _sessionid) {
         send_SessionNotFound();
         throw SockException(Err_shutdown, _sdp_track.empty() ? "can not find any availabe track when record" : "session not found when record");
@@ -331,6 +339,7 @@ void RtspSession::handleReq_RECORD(const Parser &parser){
 }
 
 void RtspSession::emitOnPlay(){
+    InfoL << "point 4";
     weak_ptr<RtspSession> weakSelf = dynamic_pointer_cast<RtspSession>(shared_from_this());
     //url鉴权回调
     auto onRes = [weakSelf](const string &err) {
@@ -368,6 +377,7 @@ void RtspSession::emitOnPlay(){
 }
 
 void RtspSession::handleReq_Describe(const Parser &parser) {
+    InfoL << "point 5";
     //该请求中的认证信息
     auto authorization = parser["Authorization"];
     weak_ptr<RtspSession> weakSelf = dynamic_pointer_cast<RtspSession>(shared_from_this());
@@ -408,6 +418,7 @@ void RtspSession::handleReq_Describe(const Parser &parser) {
 }
 
 void RtspSession::onAuthSuccess() {
+    InfoL << "point 6";
     TraceP(this);
     weak_ptr<RtspSession> weakSelf = dynamic_pointer_cast<RtspSession>(shared_from_this());
     MediaSource::findAsync(_media_info, weakSelf.lock(), [weakSelf](const MediaSource::Ptr &src){
@@ -453,6 +464,7 @@ void RtspSession::onAuthSuccess() {
 }
 
 void RtspSession::onAuthFailed(const string &realm,const string &why,bool close) {
+    InfoL << "point 7";
     GET_CONFIG(bool,authBasic,Rtsp::kAuthBasic);
     if (!authBasic) {
         //我们需要客户端优先以md5方式认证
@@ -472,6 +484,7 @@ void RtspSession::onAuthFailed(const string &realm,const string &why,bool close)
 }
 
 void RtspSession::onAuthBasic(const string &realm,const string &auth_base64){
+    InfoL << "point 8";
     //base64认证
     char user_pwd_buf[512];
     av_base64_decode((uint8_t *) user_pwd_buf, auth_base64.data(), (int)auth_base64.size());
