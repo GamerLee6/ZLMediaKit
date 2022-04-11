@@ -1011,7 +1011,9 @@ void RtspSession::startListenPeerUdpData(int track_idx) {
     InfoL << "srcIP:" << get_peer_ip().data();
 
     auto onUdpData = [weakSelf,srcIP](const Buffer::Ptr &buf, struct sockaddr *peer_addr, int interleaved){
+        InfoL << "line 1014???";
         auto strongSelf = weakSelf.lock();
+        InfoL << "line 1016???";
         if (!strongSelf) {
             InfoL << "start Listen Peer Udp Data.01";
             return false;
