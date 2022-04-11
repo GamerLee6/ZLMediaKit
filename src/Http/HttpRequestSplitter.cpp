@@ -92,6 +92,7 @@ void HttpRequestSplitter::input(const char *data,size_t len) {
             return;
         }
         //收到content数据，并且接受content完毕
+        InfoL << "point 1";
         onRecvContent(ptr,_content_len);
 
         _remain_data_size -= _content_len;
@@ -112,6 +113,7 @@ void HttpRequestSplitter::input(const char *data,size_t len) {
 
 
     //_content_len < 0;数据按照不固定长度content处理
+    InfoL << "point 2";
     onRecvContent(ptr,_remain_data_size);//消费掉所有剩余数据
     _remain_data.clear();
 }

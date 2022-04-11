@@ -387,6 +387,7 @@ public:
     void bindUdpSock(std::pair<Socket::Ptr, Socket::Ptr> &pair, const string &local_ip, bool re_use_port) {
         auto &sock0 = pair.first;
         auto &sock1 = pair.second;
+        InfoL << "local_ip:" << local_ip;
         auto sock_pair = getPortPair();
         if (!sock_pair) {
             throw runtime_error("none reserved udp port in pool");

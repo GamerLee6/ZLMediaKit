@@ -57,6 +57,7 @@ const char *RtspSplitter::onSearchPacketTail_l(const char *data, size_t len) {
 }
 
 ssize_t RtspSplitter::onRecvHeader(const char *data, size_t len) {
+    InfoL << "point 1";
     if(_isRtpPacket){
         onRtpPacket(data,len);
         return 0;
@@ -71,6 +72,7 @@ ssize_t RtspSplitter::onRecvHeader(const char *data, size_t len) {
 }
 
 void RtspSplitter::onRecvContent(const char *data, size_t len) {
+    InfoL << "point 2";
     _parser.setContent(string(data,len));
     onWholeRtspPacket(_parser);
     _parser.Clear();
