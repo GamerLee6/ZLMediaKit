@@ -1046,6 +1046,7 @@ void RtspSession::startListenPeerUdpData(int track_idx) {
         return true;
     };
 
+    InfoL <<"onUdpData:" << onUdpData;
     InfoL << "_rtp_type:" << _rtp_type; 
     switch (_rtp_type){  
         case Rtsp::RTP_MULTICAST:{
