@@ -69,6 +69,7 @@ void MediaSink::resetTracks() {
 bool MediaSink::inputFrame(const Frame::Ptr &frame) {
     auto it = _track_map.find(frame->getTrackType());
     if (it == _track_map.end()) {
+        InfoL << "point 2'";
         return false;
     }
     InfoL << "point2";
@@ -229,7 +230,9 @@ static uint8_t s_mute_adts[] = {0xff, 0xf1, 0x6c, 0x40, 0x2d, 0x3f, 0xfc, 0x00, 
 #define MUTE_ADTS_DATA_MS 130
 
 bool MuteAudioMaker::inputFrame(const Frame::Ptr &frame) {
+    InfoL << "point 4";
     if (frame->getTrackType() == TrackVideo) {
+        InfoL << "point 4'";
         auto audio_idx = frame->dts() / MUTE_ADTS_DATA_MS;
         if (_audio_idx != audio_idx) {
             _audio_idx = audio_idx;

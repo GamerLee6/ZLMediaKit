@@ -82,6 +82,7 @@ void UDPServer::onRecv(int interleaved, const Buffer::Ptr &buf, struct sockaddr*
     if (it0 == _on_recv_map.end()) {
         return;
     }
+    InfoL << "peer_ip:" << peer_ip;
     auto &ref = it0->second;
     for (auto it1 = ref.begin(); it1 != ref.end(); ++it1) {
         auto &func = it1->second;
