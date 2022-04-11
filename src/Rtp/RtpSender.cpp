@@ -20,6 +20,7 @@ using namespace toolkit;
 namespace mediakit{
 
 void RtpSender::startSend(const MediaSourceEvent::SendRtpArgs &args, const function<void(uint16_t local_port, const SockException &ex)> &cb){
+    InfoL << "point 1";
     _args = args;
     _poller = EventPollerPool::Instance().getPoller();
     auto lam = [this](std::shared_ptr<List<Buffer::Ptr>> list) { onFlushRtpList(std::move(list)); };
@@ -81,6 +82,7 @@ void RtpSender::startSend(const MediaSourceEvent::SendRtpArgs &args, const funct
 }
 
 void RtpSender::onConnect(){
+    InfoL << "point 2";
     _is_connect = true;
     //加大发送缓存,防止udp丢包之类的问题
     SockUtil::setSendBuf(_socket->rawFD(), 4 * 1024 * 1024);

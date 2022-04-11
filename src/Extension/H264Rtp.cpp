@@ -74,6 +74,7 @@ Table 1.  Summary of NAL unit types and their payload structures
 */
 
 bool H264RtpDecoder::singleFrame(const RtpPacket::Ptr &rtp, const uint8_t *ptr, ssize_t size, uint32_t stamp){
+    InfoL << "point 1";
     _frame->_buffer.assign("\x00\x00\x00\x01", 4);
     _frame->_buffer.append((char *) ptr, size);
     _frame->_pts = stamp;
@@ -141,6 +142,7 @@ bool H264RtpDecoder::mergeFu(const RtpPacket::Ptr &rtp, const uint8_t *ptr, ssiz
 }
 
 bool H264RtpDecoder::decodeRtp(const RtpPacket::Ptr &rtp) {
+    InfoL << "point 2";
     auto frame = rtp->getPayload();
     auto length = rtp->getPayloadSize();
     auto stamp = rtp->getStampMS();

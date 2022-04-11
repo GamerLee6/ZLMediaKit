@@ -133,6 +133,7 @@ void MediaSink::addTrackCompleted(){
 }
 
 void MediaSink::emitAllTrackReady() {
+    InfoL << "point 5";
     if (_all_track_ready) {
         return;
     }

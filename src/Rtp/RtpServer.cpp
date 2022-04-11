@@ -37,6 +37,7 @@ public:
     }
 
     void onRecvRtp(const Buffer::Ptr &buf, struct sockaddr *addr, int addr_len){
+        InfoL << "point 1";
         //统计rtp接受情况，用于发送rr包
         auto header = (RtpHeader *) buf->data();
         onRtp(ntohs(header->seq), ntohl(header->stamp), 0/*不发送sr,所以可以设置为0*/ , _sample_rate, buf->size());
@@ -44,6 +45,7 @@ public:
     }
 
     void startRtcp(){
+        InfoL << "point 2";
         weak_ptr<RtcpHelper> weak_self = shared_from_this();
         _rtcp_sock->setOnRead([weak_self](const Buffer::Ptr &buf, struct sockaddr *addr, int addr_len) {
             //用于接受rtcp打洞包

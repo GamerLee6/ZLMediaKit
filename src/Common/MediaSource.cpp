@@ -221,6 +221,7 @@ void MediaSource::onReaderChanged(int size) {
 }
 
 bool MediaSource::setupRecord(Recorder::type type, bool start, const string &custom_path, size_t max_second){
+    InfoL << "point 1";
     auto listener = _listener.lock();
     if (!listener) {
         WarnL << "未设置MediaSource的事件监听者，setupRecord失败:" << getSchema() << "/" << getVhost() << "/" << getApp() << "/" << getId();
@@ -238,6 +239,7 @@ bool MediaSource::isRecording(Recorder::type type){
 }
 
 void MediaSource::startSendRtp(const MediaSourceEvent::SendRtpArgs &args, const std::function<void(uint16_t, const toolkit::SockException &)> cb) {
+    InfoL << "point 2";
     auto listener = _listener.lock();
     if (!listener) {
         cb(0, SockException(Err_other, "尚未设置事件监听器"));
@@ -421,6 +423,7 @@ MediaSource::Ptr MediaSource::find(const string &vhost, const string &app, const
 }
 
 void MediaSource::emitEvent(bool regist){
+    InfoL << "point 3";
     auto listener = _listener.lock();
     if (listener) {
         //触发回调
@@ -432,6 +435,7 @@ void MediaSource::emitEvent(bool regist){
 }
 
 void MediaSource::regist() {
+    InfoL << "point 4";
     {
         //减小互斥锁临界区
         lock_guard<recursive_mutex> lock(s_media_source_mtx);

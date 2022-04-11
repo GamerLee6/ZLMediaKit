@@ -23,6 +23,7 @@ const string RtpSession::kStreamID = "stream_id";
 const string RtpSession::kIsUDP = "is_udp";
 
 void RtpSession::attachServer(const Server &server) {
+    InfoL << "point 3";
     _stream_id = const_cast<Server &>(server)[kStreamID];
     _is_udp = const_cast<Server &>(server)[kIsUDP];
 
@@ -71,6 +72,7 @@ void RtpSession::onManager() {
 }
 
 void RtpSession::onRtpPacket(const char *data, size_t len) {
+    InfoL << "point 1";
     if (!_is_udp) {
         if (_search_rtp) {
             //搜索上下文期间，数据丢弃
@@ -146,6 +148,7 @@ static const char *findSSRC(const char *data, ssize_t len, uint32_t ssrc) {
 static size_t constexpr kSSRCOffset = 2 + 4 + 4;
 
 const char *RtpSession::onSearchPacketTail(const char *data, size_t len) {
+    InfoL << "point 2";
     if (!_search_rtp) {
         //tcp上下文正常，不用搜索ssrc
         return RtpSplitter::onSearchPacketTail(data, len);
