@@ -172,9 +172,11 @@ void RtspSession::onRtpPacket(const char *data, size_t len) {
     InfoL << "point 1" ;
     uint8_t interleaved = data[1];
     if (interleaved % 2 == 0) {
+        InfoL << "point 1.0" ;
         auto track_idx = getTrackIndexByInterleaved(interleaved);
         handleOneRtp(track_idx, _sdp_track[track_idx]->_type, _sdp_track[track_idx]->_samplerate, (uint8_t *) data + RtpPacket::kRtpTcpHeaderSize, len - RtpPacket::kRtpTcpHeaderSize);
     } else {
+        InfoL << "point 1.1" ;
         auto track_idx = getTrackIndexByInterleaved(interleaved - 1);
         onRtcpPacket(track_idx, _sdp_track[track_idx], data + RtpPacket::kRtpTcpHeaderSize, len - RtpPacket::kRtpTcpHeaderSize);
     }
@@ -974,10 +976,12 @@ void RtspSession::onRtpSorted(RtpPacket::Ptr rtp, int track_idx) {
 }
 
 void RtspSession::onRcvPeerUdpData(int interleaved, const Buffer::Ptr &buf, const struct sockaddr &addr) {
+    InfoL << "onRcvPeerUdpData";
     //这是rtcp心跳包，说明播放器还存活
     _alive_ticker.resetTime();
 
     if (interleaved % 2 == 0) {
+        InfoL << "onRcvPeerUdpData.0";
         if (_push_src) {
             //这是rtsp推流上来的rtp包
             auto &ref = _sdp_track[interleaved / 2];
@@ -988,6 +992,7 @@ void RtspSession::onRcvPeerUdpData(int interleaved, const Buffer::Ptr &buf, cons
             _rtp_socks[interleaved / 2]->bindPeerAddr(&addr);
         }
     } else {
+        InfoL << "onRcvPeerUdpData.1";
         //rtcp包
         if (!_udp_connected_flags.count(interleaved)) {
             _udp_connected_flags.emplace(interleaved);
