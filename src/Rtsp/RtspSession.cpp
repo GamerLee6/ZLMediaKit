@@ -1237,6 +1237,7 @@ void RtspSession::updateRtcpContext(const RtpPacket::Ptr &rtp){
 }
 
 void RtspSession::sendRtpPacket(const RtspMediaSource::RingDataType &pkt) {
+    InfoL << " send Rtp Packet";
     switch (_rtp_type) {
         case Rtsp::RTP_TCP: {
             size_t i = 0;
@@ -1252,6 +1253,7 @@ void RtspSession::sendRtpPacket(const RtspMediaSource::RingDataType &pkt) {
         }
             break;
         case Rtsp::RTP_UDP: {
+            InfoL << " send Rtp Packet.UDP";
             size_t i = 0;
             auto size = pkt->size();
             pkt->for_each([&](const RtpPacket::Ptr &rtp) {
