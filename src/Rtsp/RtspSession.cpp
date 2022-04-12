@@ -1060,6 +1060,7 @@ void RtspSession::startListenPeerUdpData(int track_idx) {
             InfoL << "inside case RTP_UDP 0";
             auto setEvent = [&](Socket::Ptr &sock,int interleaved){
                 if(!sock){
+                    InfoL << "point 110";
                     WarnP(this) << "udp端口为空:" << interleaved;
                     return;
                 }
